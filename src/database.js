@@ -61,6 +61,24 @@ export class Database {
 
     return data;
   }
+  /**
+   * `insertMany`
+   * @param {string} table - Table name
+   * @param {Task[]} data - Resource data
+   * @returns {Promise<Task[]>>}
+   */
+  async insertMany(table, data) {
+    const parsedData = data.map(task => ({...task, id: randomUUID()}));
+    if (Array.isArray(this.#database[table])) {
+      this.#database[table] = [...this.#database[table], ...parsedData];
+    } else {
+      this.#database[table] = [...parsedData];
+    }
+
+    this.#persist();
+
+    return data;
+  }
 
   /**
    * `delete`

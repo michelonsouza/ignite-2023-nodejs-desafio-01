@@ -29,7 +29,13 @@ export const routes = [
     method: "POST",
     path: buildRoutePath("/tasks"),
     async handler(request, response) {
-      const { title, description } = request.body || {};
+      const { title, description, tasks } = request.body || {};
+
+      if (tasks) {
+        await database.insertMany("tasks", tasks);
+
+        return response.writeHead(201).end();
+      }
 
       if (!title || !description) {
         return response
@@ -117,9 +123,9 @@ export const routes = [
     method: "POST",
     path: buildRoutePath("/tasks/populate"),
     async handler(request, response) {
-      const { title, description } = request.body || {};
+      const { tasks } = request.body || {};
 
-      if (!title || !description) {
+      if (!tasks) {
         return response
           .writeHead(400)
           .end(
@@ -127,18 +133,7 @@ export const routes = [
           );
       }
 
-      /**
-       * @type {Omit<Task, 'id'>}
-       */
-      const task = {
-        title,
-        description,
-        completed_at: null,
-        created_at: new Date(),
-        updated_at: new Date(),
-      };
-
-      await database.insert("tasks", task);
+      await database.insertMany("tasks", tasks);
 
       return response.writeHead(201).end();
     },
