@@ -13,6 +13,6 @@ export function extractQueryParams(query) {
     .split("&")
     .reduce((accumulator, param) => {
       const [key, value] = param.split("=");
-      return { ...accumulator, [key]: value };
+      return { ...accumulator, [key]: decodeURIComponent(value) };
     }, {});
 }
